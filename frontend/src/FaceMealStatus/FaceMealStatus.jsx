@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as faceapi from 'face-api.js';
 import Webcam from 'react-webcam';
+import axios from 'axios';
 
 const FaceMealStatus = () => {
     const webcamRef = useRef(null);
@@ -11,150 +12,9 @@ const FaceMealStatus = () => {
     const [threshold, setThreshold] = useState(0.5);
     const [error, setError] = useState(null);
 
-    const peopleData = [
-        {
-            "id": 1,
-            "name": "Oni",
-            "url": "https://i.ibb.co.com/5TPB7rG/IMG-1666.jpg"
-        },
-        {
-            "id": 2,
-            "name": "Rana",
-            "url": "https://i.ibb.co/tKCZvNK/RANA.png"
-        },
-        {
-            "id": 3,
-            "name": "Siam",
-            "url": "https://i.ibb.co.com/qmdbHxW/IMG-1657.jpg"
-        },
-        {
-            "id": 4,
-            "name": "Nabil",
-            "url": "https://i.ibb.co/dQPSzBm/IMG-6418.jpg"
-        },
-        {
-            "id": 5,
-            "name": "Saad",
-            "url": "https://i.ibb.co.com/Ns9ZRDc/IMG-1668.jpg"
-        },
-        {
-            "id": 6,
-            "name": "Mahee vai",
-            "url": "https://i.ibb.co/qBtZKc6/IMG-20240915-224256.jpg"
-        },
-        {
-            "id": 7,
-            "name": "Fareed",
-            "url": "https://i.ibb.co/Sd5whc9/IMG-20240920-000539.jpg"
-        },
-        {
-            "id": 8,
-            "name": "Boric Ghosh",
-            "url": "https://i.ibb.co/H4grDf0/IMG-20240917-005048.jpg"
-        },
-        {
-            "id": 9,
-            "name": "Raihan Miraj",
-            "url": "https://i.ibb.co.com/crxqvDF/IMG-1661.jpg"
-        },
-        {
-            "id": 10,
-            "name": "Shimanto",
-            "url": "https://i.ibb.co/YLgX7TY/Screenshot-2024-09-16-20-47-51-515-com-miui-gallery.jpg"
-        },
-        {
-            "id": 11,
-            "name": "Salman",
-            "url": "https://i.ibb.co.com/cQvB2hx/119224889-698726800854667-486240646048911969-n.jpg"
-        },
-        {
-            "id": 12,
-            "name": "Easin",
-            "url": "https://i.ibb.co/YbR8vzr/EA.png"
-        },
-        {
-            "id": 13,
-            "name": "Sanjid",
-            "url": "https://i.ibb.co/B616drR/Sanjidvai.png"
-        },
-        {
-            "id": 14,
-            "name": "Shahadat",
-            "url": "https://i.ibb.co/Wvkz1CC/IMG-20240915-224524.jpg"
-        },
-        {
-            "id": 15,
-            "name": "Al Sabab",
-            "url": "https://i.ibb.co/prPMBk0/IMG-20240916-WA0001.jpg"
-        },
-        {
-            "id": 16,
-            "name": "Shohan",
-            "url": "https://i.ibb.co/gyd467d/IMG-20240917-232640.jpg"
-        },
-        {
-            "id": 17,
-            "name": "Mahim",
-            "url": "https://i.ibb.co.com/h86nLXq/IMG-1667.jpg"
-        },
-        {
-            "id": 18,
-            "name": "Bond",
-            "url": "https://i.ibb.co/pzf0hSc/IMG-2069.jpg"
-        },
-        {
-            "id": 19,
-            "name": "Aronno",
-            "url": "https://i.ibb.co/qkk33pK/IMG-20240916-WA0000.jpg"
-        },
-        {
-            "id": 20,
-            "name": "Aminul",
-            "url": "https://i.ibb.co/SNv80xC/IMG-20240916-WA0004.jpg"
-        },
-        {
-            "id": 21,
-            "name": "Shafi",
-            "url": "https://i.ibb.co/djNs2dN/Shafi.png"
-        },
-        {
-            "id": 22,
-            "name": "Tamzid",
-            "url": "https://i.ibb.co/nbxwkdb/IMG-20240918-183853.jpg"
-        },
-        {
-            "id": 23,
-            "name": "Rana vai",
-            "url": "https://i.ibb.co.com/Vvn8zyr/IMG-2100.jpg"
-        },
-        {
-            "id": 24,
-            "name": "Tanveen",
-            "url": "https://i.ibb.co.com/dLvkzHF/IMG-20241022-005441.jpg"
-        },
-        {
-            "id": 25,
-            "name": "Adan 14",
-            "url": "https://i.ibb.co.com/FgCZ8pK/IMG-1663.jpg"
-        },
-        {
-            "id": 26,
-            "name": "Adan",
-            "url": "https://i.ibb.co/C20yMP5/IMG-2059.jpg"
-        },
-        {
-            "id": 27,
-            "name": "Mehdi vai",
-            "url": "https://i.ibb.co/RcR2Trg/IMG-20240923-164700.jpg"
-        },
-        {
-            "id": 28,
-            "name": "Saim",
-            "url": "https://i.ibb.co.com/6B5rTYQ/IMG-20241006-032214.jpg"
-        }
-    ];
+    const [peopleData, setPeopleData] = useState([]);
 
-    // Validate URL format
+
     const isValidUrl = (url) => {
         try {
             new URL(url);
@@ -168,9 +28,13 @@ const FaceMealStatus = () => {
     useEffect(() => {
         const loadAll = async () => {
             try {
-                setError(null);
 
-                // Load models
+                const response = await axios.get('http://localhost:5000/images-list');
+                setPeopleData(response.data);
+                console.log('Reference images loaded:', response.data);
+                setLoadingProgress(20);
+                setError(null);
+                let peopleDataArr = response.data;
                 await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
                 setLoadingProgress(30);
                 await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
@@ -179,7 +43,7 @@ const FaceMealStatus = () => {
                 setLoadingProgress(80);
 
                 // Load reference images
-                await loadReferenceDescriptors();
+                await loadReferenceDescriptors(peopleDataArr);
                 setLoadingProgress(100);
                 setIsReady(true);
             } catch (error) {
@@ -193,10 +57,11 @@ const FaceMealStatus = () => {
     }, []);
 
     // Process reference images
-    const loadReferenceDescriptors = async () => {
+    const loadReferenceDescriptors = async (peopleDataArr) => {
         const descriptors = [];
+        let peopleData = [...peopleDataArr];
         const total = peopleData.length;
-
+        console.log('Total reference images:', peopleData);
         for (let i = 0; i < total; i++) {
             try {
                 const person = peopleData[i];
