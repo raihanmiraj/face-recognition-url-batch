@@ -29,7 +29,7 @@ const FaceMealStatus = () => {
         const loadAll = async () => {
             try {
 
-                const response = await axios.get('http://localhost:5000/images-list');
+                const response = await axios.get('/images-list');
                 setPeopleData(response.data);
                 console.log('Reference images loaded:', response.data);
                 setLoadingProgress(20);
