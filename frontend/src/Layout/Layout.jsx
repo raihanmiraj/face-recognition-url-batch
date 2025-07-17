@@ -8,7 +8,7 @@ const Layout = () => {
             <nav className="w-full bg-white shadow-md px-6 py-4 flex justify-between items-center">
                 {/* Logo */}
                 <div className="text-xl font-bold text-gray-800">
-                  <Link to="/" className="hover:text-blue-600">Face Recognition</Link>
+                    <Link to="/" className="hover:text-blue-600">Face Recognition</Link>
                 </div>
 
                 {/* Center Menu (Optional) */}
@@ -20,7 +20,7 @@ const Layout = () => {
                 {/* Right Side Image */}
                 <div className="flex items-center gap-4">
                     <img
-                        src="https://randomuser.me/api/portraits/men/32.jpg"
+                        src="https://i.ibb.co/bK7t3zB/IMG-1661.jpg"
                         alt="User"
                         className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
                     />
